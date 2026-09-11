@@ -1,26 +1,24 @@
 pipeline {
     agent any
-
+    environment {
+        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;${env.PATH}"
+        DOCKER_HOST = 'tcp://localhost:2375'
+    }
     stages {
         stage('Build') {
             steps {
                 echo "Building Docker Image..."
-                bat "docker build -t mypythonflaskapp ."
+                bat 'cd "week 7" && docker build -t mypythonflaskapp .'
             }
         }
-
         stage('Run') {
             steps {
-                echo "Deploying application in Docker Container..."
-                // Forcibly stop and remove any existing container named 'mycontainer'
-                bat "docker rm -f mycontainer || exit 0"
-                
-                // Run the container in detached mode on port 5000
-                bat "docker run -d -p 5000:5000 --name mycontainer mypythonflaskapp"
+                echo "Running Docker Container..."
+                bat 'docker rm -f mycontainer || exit 0'
+                bat 'docker run -d -p 5000:5000 --name mycontainer mypythonflaskapp'
             }
         }
     }
-
     post {
         success {
             echo 'Pipeline completed successfully!'
