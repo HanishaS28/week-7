@@ -1,15 +1,19 @@
 pipeline {
     agent any
+    environment {
+        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;${env.PATH}"
+        DOCKER_HOST = 'tcp://localhost:2375'
+    }
     stages {
         stage('Build') {
             steps {
-                echo "Build Docker Image"
+                echo "Building Docker Image..."
                 bat "docker build -t mypythonflaskapp ."
             }
         }
         stage('Run') {
             steps {
-                echo "Run application in Docker Container"
+                echo "Running Docker Container..."
                 bat "docker rm -f mycontainer || exit 0"
                 bat "docker run -d -p 5000:5000 --name mycontainer mypythonflaskapp"
             }
