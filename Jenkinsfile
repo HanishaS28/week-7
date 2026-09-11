@@ -1,24 +1,26 @@
 pipeline {
     agent any
-    environment {
-        DOCKER_HOST = 'tcp://localhost:2375'
-    }
+
     stages {
         stage('Build') {
             steps {
-                echo "Build Docker Image"
+                echo "Building Docker Image..."
                 bat "docker build -t mypythonflaskapp ."
             }
         }
+
         stage('Run') {
             steps {
-                echo "Run application in Docker Container"
+                echo "Deploying application in Docker Container..."
+                // Forcibly stop and remove any existing container named 'mycontainer'
                 bat "docker rm -f mycontainer || exit 0"
+                
+                // Run the container in detached mode on port 5000
                 bat "docker run -d -p 5000:5000 --name mycontainer mypythonflaskapp"
             }
         }
     }
-}
+
     post {
         success {
             echo 'Pipeline completed successfully!'
@@ -28,5 +30,3 @@ pipeline {
         }
     }
 }
-
-
